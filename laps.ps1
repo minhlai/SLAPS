@@ -1,0 +1,1 @@
+Get-AdmPwdPassword -Computername $args[0]
