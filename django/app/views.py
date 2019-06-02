@@ -9,30 +9,28 @@ from dotenv import load_dotenv
 
 load_dotenv()
 SLACK_SIGNING_SECRET = os.environ['SLACK_SIGNING_SECRET']
+
+POWERSHELLPATH = os.environ['POWERSHELLPATH']
+POWERSHELLCMD = os.environ['POWERSHELLCMD']
+
 AD_USER = os.environ['AD_USER']
 AD_PASSWORD = os.environ['AD_PASSWORD']
 
 def homePageView(request):
 	return HttpResponse('Hello, World!')
-	
-def slackEventSubscription(request):
-	challenge = None
-	body_unicode = request.body.decode('utf-8')
-	body = json.loads(body_unicode)
-	if body['type'] == 'url_verification':
-		challenge = body['challenge']
-	return JsonResponse({'challenge': challenge})
+
 
 @csrf_exempt
 def slackCommand(request):
 	computer_name = response_url = None
 	if request.method == 'POST':
-		computer_name = request.POST.get('text')
+		text = request.POST.get('text')
 		response_url = request.POST.get('response_url')
 		timestamp = request.headers.get('X-Slack-Request-Timestamp') 
 		slack_signature = request.headers.get('X-Slack-Signature')
 		version = 'v0'
 		request_body = request.body.decode()
+
 		if abs(time.time() - float(timestamp)) > 60 * 5:
 			# The request timestamp is more than five minutes from local time.
 			# It could be a replay attack, so let's ignore it.
@@ -43,15 +41,27 @@ def slackCommand(request):
 		my_signature = 'v0=' + create_sha256_signature(SLACK_SIGNING_SECRET, sig_basestring)
 		if hmac.compare_digest(my_signature, slack_signature):
 			# hooray, the request came from Slack!
-			thr = Thread(target=handle_slack_command, args=[computer_name,response_url])
-			thr.start()
+			if text == 'help':
+				get_help(response_url)
+			else:
+				computer_name = text
+				thr = Thread(target=handle_slack_command, args=[computer_name,response_url])
+				thr.start()
 
-	response = {
-		'status': 200
-	}
-	# return HttpResponse(json.dumps(response), content_type="application/json")
 	return HttpResponse('')
 
+
+def get_help(response_url):
+	response = {
+		"text": "To use this Slack command, type in the Active Directory computer name after your command. The name is not CAPS sensitive For example,",
+		"attachments": [
+			{
+				"text": "/laps G6PKGX1"
+			}
+		]
+	}
+
+	requests.post(response_url, data=json.dumps(response))
 
 def handle_slack_command(computer_name, response_url):
 	password = getLapsPassword(computer_name)
@@ -77,25 +87,18 @@ import subprocess, sys, re
 
 def getLapsPassword(computer):
 	password = ''
-	expiration = ''
-	# TODO do some exception handling here for system args
-	# if len(sys.argv) > 1: computer = sys.argv[1]
-	# else: exit()
 
-	p = subprocess.Popen(["powershell.exe", 
-				  "C:\\Users\\laim\\Desktop\\SLAPS\\laps.ps1 {0} {1} {2}".format(AD_USER, AD_PASSWORD, computer)], stdout=subprocess.PIPE)
-				  # "C:\\Users\\laim\\Desktop\\SLAPS\\laps.ps1 {}".format(computer)], stdout=subprocess.PIPE)
+
+	p = subprocess.Popen([POWERSHELLPATH, '-ExecutionPolicy', 'Unrestricted', POWERSHELLCMD, AD_USER, AD_PASSWORD, computer]
+				 , stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
 	(output, err) = p.communicate()
 	p_status = p.wait()
 
-	if len(output) > 0:
+	if len(output) > 4:
 		output = re.split(r'\s{2,}', output.decode())
 		password = output[-3].split()[-1]
-		expiration = output[-2:]
-	print(expiration)
 
-	# print("Command output : {}".format(password))
-	# print("Command exit status/return code : {}".format(p_status))
 	return password
 
 def convertPhonetically(text):
@@ -106,7 +109,6 @@ def convertPhonetically(text):
 			if character.islower(): element = element.lower()
 		else: element = character
 		string_builder = [element] + string_builder
-	print(string_builder)
 	string_builder.reverse()
 	return " ".join(string_builder)
 

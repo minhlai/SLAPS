@@ -14,10 +14,9 @@ Including another URLconf
 	2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.urls import path
-from .views import homePageView, slackEventSubscription, slackCommand
+from .views import homePageView, slackCommand
 
 urlpatterns = [
 	path('', homePageView, name='home'),
-	path('events/', slackEventSubscription, name='events'),
 	path('command/', slackCommand, name='command')
 ]

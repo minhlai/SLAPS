@@ -1,5 +1,13 @@
-$username = $arg[0]
-$password = $arg[1]
+#Get out parameters into useful variables
+param(
+    [string]$arg1,
+    [string]$arg2,
+    [string]$arg3
+)
+
+$username = $arg1
+$password = $arg2
+$computer = $arg3
 
 $securePassword = ConvertTo-SecureString $password -AsPlainText -Force
 $credential = New-Object System.Management.Automation.PSCredential $username, $securePassword
@@ -19,12 +27,13 @@ $ProcessInfo.RedirectStandardOutput = $true
 $ProcessInfo.UseShellExecute = $false
 
 #The line below is basically the command you want to run and it's passed as text, as an argument
-$ProcessInfo.Arguments = "Get-AdmPwdPassword -Computername $($args[2])"
+$ProcessInfo.Arguments = "Get-AdmPwdPassword -Computername $($computer)"
 
 #The next 3 lines are the credential for UserB, as you can see, we can't just pass $Credential
 $ProcessInfo.Username = $Credential.GetNetworkCredential().username
 $ProcessInfo.Domain = $Credential.GetNetworkCredential().Domain
 $ProcessInfo.Password = $Credential.Password
+
 
 #Finally start the process and wait for it to finish
 $Process = New-Object System.Diagnostics.Process 
