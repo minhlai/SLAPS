@@ -1,7 +1,3 @@
-# if powershell is too slow, ngen can greatly decreased startup time for powershell. requires admin rights
-# Set-Alias ngen (Join-Path ([Runtime.InteropServices.RuntimeEnvironment]::GetRuntimeDirectory()) ngen.exe)
-# ngen update
-
 # make sure virtual environment is setup for python
 pip install virtualenv
 py -m venv myvenv
