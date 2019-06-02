@@ -1,24 +1,19 @@
-from django.http import HttpResponse
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-import json, requests, os
+import json, requests, os, time, hmac, hashlib, subprocess, sys, re
 from threading import Thread
-import time, hmac, hashlib
 import phonetic_alphabet as alpha
 from dotenv import load_dotenv
 
 load_dotenv()
 SLACK_SIGNING_SECRET = os.environ['SLACK_SIGNING_SECRET']
-
 POWERSHELLPATH = os.environ['POWERSHELLPATH']
 POWERSHELLCMD = os.environ['POWERSHELLCMD']
-
 AD_USER = os.environ['AD_USER']
 AD_PASSWORD = os.environ['AD_PASSWORD']
 
 def homePageView(request):
 	return HttpResponse('Hello, World!')
-
 
 @csrf_exempt
 def slackCommand(request):
@@ -60,7 +55,6 @@ def get_help(response_url):
 			}
 		]
 	}
-
 	requests.post(response_url, data=json.dumps(response))
 
 def handle_slack_command(computer_name, response_url):
@@ -79,19 +73,13 @@ def handle_slack_command(computer_name, response_url):
 			}
 		]
 	}
-
 	requests.post(response_url, data=json.dumps(response))
-
-
-import subprocess, sys, re
 
 def getLapsPassword(computer):
 	password = ''
-
-
 	p = subprocess.Popen([POWERSHELLPATH, '-ExecutionPolicy', 'Unrestricted', POWERSHELLCMD, AD_USER, AD_PASSWORD, computer]
 				 , stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-
+	
 	(output, err) = p.communicate()
 	p_status = p.wait()
 
