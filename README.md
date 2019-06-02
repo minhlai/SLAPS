@@ -1,5 +1,5 @@
 # SLAPS
-Slack-based Local Admin PAssword Solution
+Slack-based Local Admin Password Solution
 
 Install Local Administrator Password Solution (LAPS) from Microsoft and make sure to install the Powershell module!
 
