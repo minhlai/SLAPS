@@ -1,7 +1,7 @@
 # SLAPS
 
 
-##Slack-based Local Admin Password Solution
+## Slack-based Local Admin Password Solution
 
 LAPS is a great tool for securing client computers, but it can get annoying when you don't have easy access on-the-go. Get your client computer's local admin password through Slack!
 
