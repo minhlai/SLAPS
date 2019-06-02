@@ -1,3 +1,5 @@
+#Credit to simone.corbisiero @ https://www.itdroplets.com/run-a-command-as-a-different-user-in-powershell/ for this beautiful script
+
 #Get out parameters into useful variables
 param(
     [string]$arg1,
@@ -26,7 +28,7 @@ $ProcessInfo.RedirectStandardError = $true
 $ProcessInfo.RedirectStandardOutput = $true 
 $ProcessInfo.UseShellExecute = $false
 
-#The line below is basically the command you want to run and it's passed as text, as an argument
+#The line below will run the LAPS Powershell command using the given domain credentials
 $ProcessInfo.Arguments = "Get-AdmPwdPassword -Computername $($computer)"
 
 #The next 3 lines are the credential for UserB, as you can see, we can't just pass $Credential
