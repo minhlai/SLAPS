@@ -11,6 +11,9 @@ POWERSHELLPATH = os.environ['POWERSHELLPATH']
 POWERSHELLCMD = os.environ['POWERSHELLCMD']
 AD_USER = os.environ['AD_USER']
 AD_PASSWORD = os.environ['AD_PASSWORD']
+ALLOWED_SLACK_CHANNELS = os.environ['ALLOWED_SLACK_CHANNELS']
+print(ALLOWED_SLACK_CHANNELS)
+ALLOWED_SLACK_CHANNELS  = ALLOWED_SLACK_CHANNELS.split(",")
 
 def homePageView(request):
 	return HttpResponse('Hello, World!')
@@ -26,9 +29,16 @@ def slackCommand(request):
 		version = 'v0'
 		request_body = request.body.decode()
 
+		channel = request.POST.get('channel_id')
+
+		if channel not in ALLOWED_SLACK_CHANNELS:
+			# This slack command not allowed to run from this channel
+			# We should ignore this request.
+			return HttpResponse('')
+
 		if abs(time.time() - float(timestamp)) > 60 * 5:
 			# The request timestamp is more than five minutes from local time.
-			# It could be a replay attack, so let's ignore it.
+			# It could be a replay attack, so let's ignore it and let it time out.
 			return
 
 		# Let's remake our Slack Signature and compare it
@@ -39,10 +49,11 @@ def slackCommand(request):
 			if text == 'help':
 				get_help(response_url)
 			else:
+				# spawn thread to handle the request
 				computer_name = text
 				thr = Thread(target=handle_slack_command, args=[computer_name,response_url])
 				thr.start()
-
+	# Reply 200 before Slack times out
 	return HttpResponse('')
 
 

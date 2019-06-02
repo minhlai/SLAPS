@@ -26,6 +26,7 @@ AD_USER= domain\user of an AD user with LAPS read privileges
 AD_PASSWORD= password of that user
 
 ALLOWED_HOST= hostname
+ALLOWED_SLACK_CHANNELS= put a comma separate list of channel IDs here that can have access. such as {GS2FD231Y,DFKJXSU38} without the brackets.
 ```
 
 ## Speedup Powershell
