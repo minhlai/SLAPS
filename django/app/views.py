@@ -77,12 +77,12 @@ def handle_slack_command(computer_name, response_url):
 
 def getLapsPassword(computer):
 	password = ''
-	p = subprocess.Popen([POWERSHELLPATH, '-ExecutionPolicy', 'Unrestricted', POWERSHELLCMD, AD_USER, AD_PASSWORD, computer]
+	p = subprocess.Popen([POWERSHELLPATH, '-ExecutionPolicy', 'Unrestricted', '-NoProfile', POWERSHELLCMD, AD_USER, AD_PASSWORD, computer]
 				 , stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 	
 	(output, err) = p.communicate()
 	p_status = p.wait()
-
+	p.kill()
 	if len(output) > 4:
 		output = re.split(r'\s{2,}', output.decode())
 		password = output[-3].split()[-1]
