@@ -48,7 +48,7 @@ def slackCommand(request):
 
 def get_help(response_url):
 	response = {
-		"text": "To use this Slack command, type in the Active Directory computer name after your command. The name is not CAPS sensitive For example,",
+		"text": "To use this Slack command, type in the Active Directory computer name after your command. The computer name is not case sensitive, but the password is. Try,",
 		"attachments": [
 			{
 				"text": "/laps G6PKGX1"
