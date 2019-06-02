@@ -1,1 +1,4 @@
 Django
+requests
+python-dotenv
+phonetic-alphabet
