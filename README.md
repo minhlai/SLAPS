@@ -1,6 +1,8 @@
 # SLAPS
 Slack-based Local Admin Password Solution
 
+LAPS is a great tool for securing client computers, but it can get annoying when you don't have easy access on-the-go. Get your client computer's local admin password through Slack!
+
 Install Local Administrator Password Solution (LAPS) from Microsoft and make sure to install the Powershell module!
 
 Open Powershell in Admin Mode and run `Set-ExecutionPolicy unrestricted`
