@@ -29,7 +29,7 @@ $ProcessInfo.RedirectStandardOutput = $true
 $ProcessInfo.UseShellExecute = $false
 
 #The line below will run the LAPS Powershell command using the given domain credentials
-$ProcessInfo.Arguments = "Get-AdmPwdPassword -Computername $($computer)"
+$ProcessInfo.Arguments = "-NoProfile Get-AdmPwdPassword -Computername $($computer)"
 
 #The next 3 lines are the credential for UserB, as you can see, we can't just pass $Credential
 $ProcessInfo.Username = $Credential.GetNetworkCredential().username

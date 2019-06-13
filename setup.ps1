@@ -6,4 +6,4 @@ python -m pip install --upgrade pip
 pip install -r .\requirements.txt
 
 # run server
-py .\django\manage.py runserver 0.0.0.0:80
+py .\django\manage.py runserver 0.0.0.0:8000
